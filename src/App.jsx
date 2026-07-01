@@ -8,6 +8,12 @@ import Hero from './components/Hero'
 import WhoWeAre from './components/WhoWeAre'
 import Service from './components/Service'
 import Vision from './components/Vision'
+import Team from './components/Team'
+import StatsSection from './components/Statssection'
+import TestimonialsSection from './components/Testimonialssection'
+import PartnersSection from './components/Partnerssection'
+import ArticlesSection from './components/Articlessection'
+import Footer from './components/Footer'
 
 
 
@@ -21,6 +27,12 @@ function App() {
       <WhoWeAre/>
    <Service/>
    <Vision/>
+   <Team/>
+   <StatsSection/>
+   <TestimonialsSection/>
+   <PartnersSection/>
+   <ArticlesSection/>
+   <Footer/>
     </>
   )
 }
