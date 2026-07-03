@@ -1,15 +1,15 @@
-import React from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import { ArrowUpRight } from "lucide-react";
+import { gsap } from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 
-// Two distinct bands: a lighter "connect" band up top, a darker band
-// underneath for the link columns + bottom bar.
+gsap.registerPlugin(ScrollTrigger);
+
 const CONNECT_BG = "#16273f";
 const LINKS_BG = "#0c1a30";
 const GOLD = "white";
 
-/* lucide-react dropped brand/logo icons (Facebook, Twitter, Instagram,
-   Youtube, etc.) in recent versions, so these are small inline SVGs
-   instead of a lucide import — keeps this component version-proof. */
+/* Social Icons */
 function XIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -17,6 +17,7 @@ function XIcon(props) {
     </svg>
   );
 }
+
 function FacebookIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -24,6 +25,7 @@ function FacebookIcon(props) {
     </svg>
   );
 }
+
 function YoutubeIcon(props) {
   return (
     <svg viewBox="0 0 24 24" fill="currentColor" {...props}>
@@ -31,9 +33,16 @@ function YoutubeIcon(props) {
     </svg>
   );
 }
+
 function InstagramIcon(props) {
   return (
-    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" {...props}>
+    <svg
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="1.75"
+      {...props}
+    >
       <rect x="3" y="3" width="18" height="18" rx="5" />
       <circle cx="12" cy="12" r="4" />
       <circle cx="17.2" cy="6.8" r="1" fill="currentColor" stroke="none" />
@@ -41,141 +50,300 @@ function InstagramIcon(props) {
   );
 }
 
-const navLinks = ["About us", "Services", "Case Study", "Blogs", "Team"];
-
-const serviceLinks = [
-  "Risk Mitigation",
-  "Tax Planning",
-  "Financial Forecasting",
-  "Acquisitions Advisory",
-  "Cash Flow Management",
-  "Investment Strategies",
+/* Navigation (same as Navbar) */
+const navLinks = [
+  { name: "About", id: "about" },
+  { name: "Services", id: "services" },
+ 
+  { name: "Team", id: "team" },
+  { name: "Reviews", id: "reviews" },
 ];
 
-const companyLinks = ["FAQ", "Reviews", "Privacy Policy", "Terms & Conditions", "License"];
+/* Company Services */
+const serviceLinks = [
+  "Hotel & Resort Operations",
+  "Pre-opening Services",
+  "Revenue Management",
+  "Staff Training & SOP Development",
+  "Restaurant & Bar Management",
+  "Hospitality Consulting",
+];
 
 function Footer() {
+  const scrollToSection = (id) => {
+    const section = document.getElementById(id);
+
+    if (section) {
+      section.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    }
+  };
+
+  const footerRef = useRef(null);
+  const ctaTextRef = useRef(null);
+  const ctaButtonRef = useRef(null);
+  const aboutRef = useRef(null);
+  const navColRef = useRef(null);
+  const servicesColRef = useRef(null);
+  const contactColRef = useRef(null);
+  const bottomBarRef = useRef(null);
+
+  useLayoutEffect(() => {
+    const ctx = gsap.context(() => {
+      // Top CTA: simple fade + slide up.
+      const ctaTl = gsap.timeline({
+        scrollTrigger: {
+          trigger: footerRef.current,
+          start: "top 80%",
+          // play scrolling down into view, reverse scrolling back up
+          toggleActions: "play reverse play reverse",
+        },
+        defaults: { ease: "power2.out", duration: 0.7 },
+      });
+
+      ctaTl
+        .from(ctaTextRef.current, { y: 20, opacity: 0 })
+        .from(ctaButtonRef.current, { y: 20, opacity: 0 }, "-=0.45");
+
+      // Footer columns: staggered fade + slide up as a group.
+      gsap.from(
+        [aboutRef.current, navColRef.current, servicesColRef.current, contactColRef.current],
+        {
+          y: 20,
+          opacity: 0,
+          duration: 0.6,
+          ease: "power2.out",
+          stagger: 0.1,
+          scrollTrigger: {
+            trigger: aboutRef.current,
+            start: "top 85%",
+            toggleActions: "play reverse play reverse",
+          },
+        }
+      );
+
+      // Bottom bar: fade in last.
+      gsap.from(bottomBarRef.current, {
+        y: 14,
+        opacity: 0,
+        duration: 0.6,
+        ease: "power2.out",
+        scrollTrigger: {
+          trigger: bottomBarRef.current,
+          start: "top 95%",
+          toggleActions: "play reverse play reverse",
+        },
+      });
+    }, footerRef);
+
+    return () => ctx.revert();
+  }, []);
+
   return (
-    <footer className="w-full">
-      {/* Band 1 — "Let's Connect" hero strip */}
-      <div style={{ backgroundColor: CONNECT_BG }} className="w-full">
-        <div className="max-w-7xl mx-auto px-5 sm:px-0 py-14 lg:py-16">
-          <div className="flex flex-col lg:flex-row lg:items-start lg:justify-between gap-8">
-            <div className="max-w-2xl">
+    <footer id="contact" ref={footerRef} className="w-full">
+      {/* Top CTA */}
+      <div
+        style={{ backgroundColor: CONNECT_BG }}
+        className="w-full"
+      >
+        <div className="max-w-7xl mx-auto px-5 lg:px-0 py-14 lg:py-16">
+          <div className="flex flex-col lg:flex-row items-start justify-between gap-10">
+            <div ref={ctaTextRef} className="max-w-2xl">
               <p
                 style={{ color: GOLD }}
-                className="text-md font-normal tracking-wide mb-3"
+                className="text-base mb-3"
               >
-                Let&apos;s Connect
+                Let's Connect
               </p>
-              <h2 className="text-white text-xl sm:text-2xl lg:text-3xl font-normal">
-                The comprehensive chronicle of financial insights, business
-                tips, and strategic advice for every entrepreneur and investor
+
+              <h2 className="text-white text-3xl  leading-relaxed font-normal">
+                Helping hospitality businesses grow through operational
+                excellence, strategic consulting, and exceptional guest
+                experiences.
               </h2>
             </div>
 
-            <a href="#" className="flex items-center gap-4 shrink-0 group">
-              <span className="text-white text-sm sm:text-2xl font-medium">Get a Quote</span>
-              <span className="w-11 h-11 rounded-full bg-white flex items-center justify-center group-hover:opacity-80 transition-opacity">
-                <ArrowUpRight size={24} strokeWidth={2.25} style={{ color: LINKS_BG }} />
+            <button
+              ref={ctaButtonRef}
+              onClick={() => scrollToSection("contact")}
+              className="flex items-center gap-4 group"
+            >
+              <span className="text-white text-xl">
+                Get a Quote
               </span>
-            </a>
+
+              <span className="w-12 h-12 rounded-full bg-white flex items-center justify-center group-hover:scale-105 transition">
+                <ArrowUpRight
+                  size={22}
+                  style={{ color: LINKS_BG }}
+                />
+              </span>
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Band 2 — link columns + bottom bar, visually distinct from band 1 */}
-      <div style={{ backgroundColor: LINKS_BG }} className="w-full">
-        <div className=" px-5 sm:px-24">
-          <div className="grid grid-cols-2 sm:grid-cols-4 gap-8 sm:gap-6 py-12">
-            <div className="flex flex-col gap-3">
-              {navLinks.map((link) => (
-                <a
-                  key={link}
-                  href="#"
-                  style={{ color: GOLD }}
-                  className="text-3xl font-normal hover:opacity-75 transition-opacity w-fit"
-                >
-                  {link}
-                </a>
-              ))}
-            </div>
+      {/* Footer */}
+      <div
+        style={{ backgroundColor: LINKS_BG }}
+        className="w-full"
+      >
+        <div className="max-w-7xl mx-auto px-5 lg:px-0">
 
-.l
-            <div className="flex flex-col gap-3">
-              {serviceLinks.map((link) => (
-                <a
-                  key={link}
-                  href="#"
-                  className="text-slate-400 text-sm hover:text-slate-200 transition-colors w-fit"
-                >
-                  {link}
-                </a>
-              ))}
-            </div>
+          <div className="flex flex-col lg:flex-row justify-between gap-16 py-16">
 
-            <div className="flex flex-col gap-3">
-              {companyLinks.map((link) => (
-                <a
-                  key={link}
-                  href="#"
-                  className="text-slate-400 text-sm hover:text-slate-200 transition-colors w-fit"
-                >
-                  {link}
-                </a>
-              ))}
-            </div>
+            {/* Left Side */}
+            <div ref={aboutRef} className="lg:w-1/3">
+              <h2 className="text-white text-3xl font-semibold mb-6">
+                Mauri Solution
+              </h2>
 
-            <div className="flex flex-col gap-3">
-              <p className="text-slate-400 text-sm leading-relaxed">
-                4517 W. Story St. Grove,
-                <br />
-                Pennsylvania 6-7987
+              <p className="text-slate-400 leading-8">
+                Mauri Solution provides professional hospitality
+                management services for hotels, resorts, restaurants,
+                and hospitality businesses. We help clients improve
+                operations, maximize revenue, and deliver exceptional
+                guest experiences.
               </p>
-              <a
-                href="mailto:hello@example.com"
-                className="text-slate-400 text-sm hover:text-slate-200 transition-colors w-fit"
-              >
-                hello@example.com
-              </a>
-              <a
-                href="tel:2065551234"
-                className="text-slate-400 text-sm hover:text-slate-200 transition-colors w-fit"
-              >
-                (206) 555-0118
-              </a>
-              <a
-                href="#"
-                style={{ color: GOLD }}
-                className="inline-flex items-center gap-1.5 text-sm font-medium mt-2 hover:opacity-75 transition-opacity w-fit"
-              >
-                Contact us
-                <ArrowUpRight size={14} strokeWidth={2.25} />
-              </a>
             </div>
+
+            {/* Right Side */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-12">
+
+              {/* Navigation */}
+              <div ref={navColRef}>
+                <h3 className="text-white text-xl mb-6">
+                  Navigation
+                </h3>
+
+                <div className="flex flex-col gap-3">
+                  {navLinks.map((item) => (
+                    <button
+                      key={item.id}
+                      onClick={() => scrollToSection(item.id)}
+                      className="text-left text-slate-400 hover:text-white transition"
+                    >
+                      {item.name}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {/* Services */}
+              <div ref={servicesColRef}>
+                <h3 className="text-white text-xl mb-6">
+                  Services
+                </h3>
+
+                <div className="flex flex-col gap-3">
+                  {serviceLinks.map((service) => (
+                    <p
+                      key={service}
+                      className="text-slate-400 text-sm leading-6"
+                    >
+                      {service}
+                    </p>
+                  ))}
+                </div>
+              </div>
+
+              {/* Contact */}
+              <div ref={contactColRef}>
+                <h3 className="text-white text-xl mb-6">
+                  Contact
+                </h3>
+
+                <div className="flex flex-col gap-4">
+                  <p className="text-slate-400">
+                    Kathmandu, Nepal
+                  </p>
+
+                  <a
+                    href="mailto:info@maurisolution.com"
+                    className="text-slate-400 hover:text-white transition"
+                  >
+                    info@maurisolution.com
+                  </a>
+
+                  <a
+                    href="tel:+9779800000000"
+                    className="text-slate-400 hover:text-white transition"
+                  >
+                    +977 9800000000
+                  </a>
+
+                  {/* <button
+                    onClick={() => scrollToSection("contact")}
+                    className="inline-flex items-center gap-2 text-white mt-2 hover:opacity-80 transition"
+                  >
+                    Contact us
+                    <ArrowUpRight size={15} />
+                  </button> */}
+                </div>
+              </div>
+
+            </div>
+
           </div>
 
+          {/* Bottom Bar */}
           <div className="border-t border-white/10" />
 
-          <div className="flex flex-col-reverse sm:flex-row items-center justify-between gap-4 py-6">
-            <p className="text-slate-500 text-xs text-center sm:text-left">
-              &copy; 2026 Helder. Designed by Giona. Powered by Webflow.
-            </p>
-            <div className="flex items-center gap-4">
-              <a href="#" aria-label="X" className="text-slate-400 hover:text-white transition-colors">
-                <XIcon width={15} height={15} />
-              </a>
-              <a href="#" aria-label="Facebook" className="text-slate-400 hover:text-white transition-colors">
-                <FacebookIcon width={15} height={15} />
-              </a>
-              <a href="#" aria-label="YouTube" className="text-slate-400 hover:text-white transition-colors">
-                <YoutubeIcon width={17} height={17} />
-              </a>
-              <a href="#" aria-label="Instagram" className="text-slate-400 hover:text-white transition-colors">
-                <InstagramIcon width={16} height={16} />
-              </a>
-            </div>
-          </div>
+          {/* Bottom Bar */}
+<div className="border-t border-white/10" />
+
+<div ref={bottomBarRef} className="flex flex-col lg:flex-row items-center justify-between gap-6 py-6">
+  <div className="text-center lg:text-left">
+    <p className="text-slate-500 text-sm">
+      © {new Date().getFullYear()} Mauri Solution. All Rights Reserved.
+    </p>
+
+    <p className="text-slate-500 text-sm mt-2">
+      Crafted by{" "}
+      <a
+        href="https://sait.com.np/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-white hover:text-slate-300 transition-colors"
+      >
+        S.A I.T Solution Nepal
+      </a>
+    </p>
+  </div>
+
+  <div className="flex items-center gap-5">
+    <a
+      href="#"
+      className="text-slate-400 hover:text-white transition"
+    >
+      <XIcon width={16} height={16} />
+    </a>
+
+    <a
+      href="#"
+      className="text-slate-400 hover:text-white transition"
+    >
+      <FacebookIcon width={16} height={16} />
+    </a>
+
+    <a
+      href="#"
+      className="text-slate-400 hover:text-white transition"
+    >
+      <YoutubeIcon width={18} height={18} />
+    </a>
+
+    <a
+      href="#"
+      className="text-slate-400 hover:text-white transition"
+    >
+      <InstagramIcon width={17} height={17} />
+    </a>
+  </div>
+</div>
+
         </div>
       </div>
     </footer>

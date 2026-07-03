@@ -63,7 +63,7 @@ function ArticleCard({ date, category, title, image }) {
 
 function ArticlesSection() {
   return (
-    <section style={{ backgroundColor: BG }} className="w-full">
+    <section id="blogs" style={{ backgroundColor: BG }} className="w-full">
       <div className="max-w-7xl mx-auto px-4 sm:px-0 py-14 lg:py-20">
         <div className="flex items-start sm:items-center justify-between mb-8">
           <div>

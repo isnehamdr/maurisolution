@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+html,
+body,
+#root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  min-height: 100%;
+  background-color: #16273f;
+}
+
 body {
-  font-family: 'Rethink Sans', sans-serif;
+  font-family: "Rethink Sans", sans-serif;
 }

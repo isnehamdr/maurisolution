@@ -12,8 +12,9 @@ import Team from './components/Team'
 import StatsSection from './components/Statssection'
 import TestimonialsSection from './components/Testimonialssection'
 import PartnersSection from './components/Partnerssection'
-import ArticlesSection from './components/Articlessection'
+// import ArticlesSection from './components/Articlessection'
 import Footer from './components/Footer'
+import BacktoTop from './components/BacktoTop'
 
 
 
@@ -23,6 +24,7 @@ function App() {
   return (
     <>
       <Navbar/>
+      <BacktoTop/>
       <Hero/>
       <WhoWeAre/>
    <Service/>
@@ -31,7 +33,7 @@ function App() {
    <StatsSection/>
    <TestimonialsSection/>
    <PartnersSection/>
-   <ArticlesSection/>
+   {/* <ArticlesSection/> */}
    <Footer/>
     </>
   )
