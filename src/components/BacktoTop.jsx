@@ -27,7 +27,7 @@ const BacktoTop = () => {
     <div className="fixed bottom-4 right-4 md:bottom-4 md:right-6 z-[9999] flex flex-col items-center gap-2">
       {/* WhatsApp Button */}
       <a
-        href="https://wa.me/97798XXXXXXXX" // Replace with your WhatsApp number
+        href="https://wa.me/9779851043700" // Replace with your WhatsApp number
         target="_blank"
         rel="noopener noreferrer"
         aria-label="Chat on WhatsApp"

@@ -5,7 +5,6 @@ import { gsap } from "gsap";
 const navLinks = [
   { name: "About", id: "about" },
   { name: "Services", id: "services" },
-
   { name: "Team", id: "team" },
   { name: "Reviews", id: "reviews" },
 ];
@@ -75,14 +74,24 @@ function Navbar() {
         className="fixed top-0 left-0 w-full z-50 bg-[#16273f] border border-gray-50/5"
       >
         <div className="max-w-7xl mx-auto px-4 lg:px-0">
-          <div className="flex items-center justify-between h-16">
+          <div className="flex items-center justify-between h-16 sm:h-20">
             {/* Logo */}
-            <button
+            {/* <button
               onClick={() => scrollToSection("home")}
               className="text-white text-2xl font-semibold flex-shrink-0 cursor-pointer"
             >
               Mauri Solution
-            </button>
+            </button> */}
+          <button
+  onClick={() => scrollToSection("home")}
+  className="flex-shrink-0 cursor-pointer flex items-center"
+>
+  <img
+    src="/image/maurilogo.png"
+    alt="Mauri Solution Logo"
+    className="h-16 lg:h-20 w-auto object-cover invert brightness-0 sm:mt-2"
+  />
+</button>
 
             {/* Desktop Navigation */}
             <div className="hidden lg:flex items-center gap-8">

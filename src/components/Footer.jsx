@@ -1,9 +1,5 @@
-import React, { useLayoutEffect, useRef } from "react";
+import React from "react";
 import { ArrowUpRight } from "lucide-react";
-import { gsap } from "gsap";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
-
-gsap.registerPlugin(ScrollTrigger);
 
 const CONNECT_BG = "#16273f";
 const LINKS_BG = "#0c1a30";
@@ -81,68 +77,8 @@ function Footer() {
     }
   };
 
-  const footerRef = useRef(null);
-  const ctaTextRef = useRef(null);
-  const ctaButtonRef = useRef(null);
-  const aboutRef = useRef(null);
-  const navColRef = useRef(null);
-  const servicesColRef = useRef(null);
-  const contactColRef = useRef(null);
-  const bottomBarRef = useRef(null);
-
-  useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      // Top CTA: simple fade + slide up.
-      const ctaTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: footerRef.current,
-          start: "top 80%",
-          // play scrolling down into view, reverse scrolling back up
-          toggleActions: "play reverse play reverse",
-        },
-        defaults: { ease: "power2.out", duration: 0.7 },
-      });
-
-      ctaTl
-        .from(ctaTextRef.current, { y: 20, opacity: 0 })
-        .from(ctaButtonRef.current, { y: 20, opacity: 0 }, "-=0.45");
-
-      // Footer columns: staggered fade + slide up as a group.
-      gsap.from(
-        [aboutRef.current, navColRef.current, servicesColRef.current, contactColRef.current],
-        {
-          y: 20,
-          opacity: 0,
-          duration: 0.6,
-          ease: "power2.out",
-          stagger: 0.1,
-          scrollTrigger: {
-            trigger: aboutRef.current,
-            start: "top 85%",
-            toggleActions: "play reverse play reverse",
-          },
-        }
-      );
-
-      // Bottom bar: fade in last.
-      gsap.from(bottomBarRef.current, {
-        y: 14,
-        opacity: 0,
-        duration: 0.6,
-        ease: "power2.out",
-        scrollTrigger: {
-          trigger: bottomBarRef.current,
-          start: "top 95%",
-          toggleActions: "play reverse play reverse",
-        },
-      });
-    }, footerRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <footer id="contact" ref={footerRef} className="w-full">
+    <footer id="contact" className="w-full">
       {/* Top CTA */}
       <div
         style={{ backgroundColor: CONNECT_BG }}
@@ -150,7 +86,7 @@ function Footer() {
       >
         <div className="max-w-7xl mx-auto px-5 lg:px-0 py-14 lg:py-16">
           <div className="flex flex-col lg:flex-row items-start justify-between gap-10">
-            <div ref={ctaTextRef} className="max-w-2xl">
+            <div className="max-w-2xl">
               <p
                 style={{ color: GOLD }}
                 className="text-base mb-3"
@@ -166,7 +102,6 @@ function Footer() {
             </div>
 
             <button
-              ref={ctaButtonRef}
               onClick={() => scrollToSection("contact")}
               className="flex items-center gap-4 group"
             >
@@ -195,11 +130,11 @@ function Footer() {
           <div className="flex flex-col lg:flex-row justify-between gap-16 py-16">
 
             {/* Left Side */}
-            <div ref={aboutRef} className="lg:w-1/3">
-              <h2 className="text-white text-3xl font-semibold mb-6">
+            <div className="lg:w-1/3">
+              {/* <h2 className="text-white text-3xl font-semibold mb-6">
                 Mauri Solution
-              </h2>
-
+              </h2> */}
+              <img className="mb-6 w-24  h-24 invert brightness-0" src="/image/maurilogo.png" alt="Mauri Solution" />
               <p className="text-slate-400 leading-8">
                 Mauri Solution provides professional hospitality
                 management services for hotels, resorts, restaurants,
@@ -213,7 +148,7 @@ function Footer() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-12">
 
               {/* Navigation */}
-              <div ref={navColRef}>
+              <div>
                 <h3 className="text-white text-xl mb-6">
                   Navigation
                 </h3>
@@ -232,7 +167,7 @@ function Footer() {
               </div>
 
               {/* Services */}
-              <div ref={servicesColRef}>
+              <div>
                 <h3 className="text-white text-xl mb-6">
                   Services
                 </h3>
@@ -250,7 +185,7 @@ function Footer() {
               </div>
 
               {/* Contact */}
-              <div ref={contactColRef}>
+              <div>
                 <h3 className="text-white text-xl mb-6">
                   Contact
                 </h3>
@@ -268,10 +203,10 @@ function Footer() {
                   </a>
 
                   <a
-                    href="tel:+9779800000000"
+                    href="tel:+9779851043700"
                     className="text-slate-400 hover:text-white transition"
                   >
-                    +977 9800000000
+                    +977 9851043700
                   </a>
 
                   {/* <button
@@ -294,13 +229,13 @@ function Footer() {
           {/* Bottom Bar */}
 <div className="border-t border-white/10" />
 
-<div ref={bottomBarRef} className="flex flex-col lg:flex-row items-center justify-between gap-6 py-6">
+<div className="flex flex-col lg:flex-row items-center justify-between gap-6 py-6">
   <div className="text-center lg:text-left">
     <p className="text-slate-500 text-sm">
       © {new Date().getFullYear()} Mauri Solution. All Rights Reserved.
     </p>
 
-    <p className="text-slate-500 text-sm mt-2">
+    {/* <p className="text-slate-500 text-sm mt-2">
       Crafted by{" "}
       <a
         href="https://sait.com.np/"
@@ -310,10 +245,10 @@ function Footer() {
       >
         S.A I.T Solution Nepal
       </a>
-    </p>
+    </p> */}
   </div>
 
-  <div className="flex items-center gap-5">
+  {/* <div className="flex items-center gap-5">
     <a
       href="#"
       className="text-slate-400 hover:text-white transition"
@@ -341,7 +276,19 @@ function Footer() {
     >
       <InstagramIcon width={17} height={17} />
     </a>
-  </div>
+  </div> */}
+
+    <p className="text-slate-500 text-sm mt-2">
+      Crafted by{" "}
+      <a
+        href="https://sait.com.np/"
+        target="_blank"
+        rel="noopener noreferrer"
+        className="text-white hover:text-slate-300 transition-colors"
+      >
+        S.A I.T Solution Nepal
+      </a>
+    </p>
 </div>
 
         </div>

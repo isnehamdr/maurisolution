@@ -61,20 +61,20 @@ function ServiceRow({ icon: Icon, title, description, isLast }) {
         !isLast ? "border-b border-white/10" : ""
       }`}
     >
-      <div className="grid grid-cols-1 sm:grid-cols-[1fr_1.6fr] gap-5 lg:gap-16 items-start">
-        <div className="flex items-center gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-[1fr_1.6fr] gap-3 sm:gap-5 lg:gap-16 items-start">
+        <div className="flex items-center gap-3 sm:gap-4 min-w-0">
           <Icon
-            size={30}
+            size={28}
             strokeWidth={1.5}
-            className="text-white shrink-0"
+            className="text-white shrink-0 sm:w-[30px] sm:h-[30px]"
           />
 
-          <h3 className="text-white text-lg lg:text-xl font-normal">
+          <h3 className="text-white text-base sm:text-lg lg:text-xl font-normal leading-snug">
             {title}
           </h3>
         </div>
 
-        <p className="text-slate-300 text-sm lg:text-base leading-7 max-w-lg">
+        <p className="text-slate-300 text-sm lg:text-base leading-6 sm:leading-7 max-w-lg">
           {description}
         </p>
       </div>
@@ -91,37 +91,59 @@ function Service() {
 
   useLayoutEffect(() => {
     const ctx = gsap.context(() => {
-      // Left column: simple staggered fade + slide up.
-      const introTl = gsap.timeline({
-        scrollTrigger: {
-          trigger: sectionRef.current,
-          start: "top 75%",
-          // play scrolling down into view, reverse scrolling back up
-          toggleActions: "play reverse play reverse",
+      // matchMedia lets us tune animation distance/stagger per breakpoint
+      // and gsap automatically cleans up + re-runs the matched block on resize.
+      const mm = gsap.matchMedia();
+
+      mm.add(
+        {
+          isMobile: "(max-width: 639px)",
+          isDesktop: "(min-width: 640px)",
         },
-        defaults: { ease: "power2.out", duration: 0.7 },
-      });
+        (context) => {
+          const { isMobile } = context.conditions;
 
-      introTl
-        .from(badgeRef.current, { y: 20, opacity: 0 })
-        .from(headingRef.current, { y: 24, opacity: 0 }, "-=0.45")
-        .from(paraRef.current, { y: 20, opacity: 0 }, "-=0.45");
+          // Left column: staggered fade + slide up, plays once on enter.
+          const introTl = gsap.timeline({
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: isMobile ? "top 85%" : "top 75%",
+              toggleActions: "play none none reverse",
+            },
+            defaults: { ease: "power2.out", duration: 0.7 },
+          });
 
-      // Right column: each service row fades + slides up, staggered.
-      const rows = rowsWrapRef.current.querySelectorAll("[data-row]");
+          introTl
+            .from(badgeRef.current, { y: 20, opacity: 0 })
+            .from(headingRef.current, { y: 24, opacity: 0 }, "-=0.45")
+            .from(paraRef.current, { y: 20, opacity: 0 }, "-=0.45");
 
-      gsap.from(rows, {
-        y: 20,
-        opacity: 0,
-        duration: 0.6,
-        ease: "power2.out",
-        stagger: 0.12,
-        scrollTrigger: {
-          trigger: rowsWrapRef.current,
-          start: "top 80%",
-          toggleActions: "play reverse play reverse",
-        },
-      });
+          // Right column: each service row fades + slides up, staggered.
+          const rows = rowsWrapRef.current.querySelectorAll("[data-row]");
+
+          gsap.from(rows, {
+            y: isMobile ? 14 : 20,
+            opacity: 0,
+            duration: 0.6,
+            ease: "power2.out",
+            stagger: isMobile ? 0.08 : 0.12,
+            scrollTrigger: {
+              trigger: rowsWrapRef.current,
+              start: isMobile ? "top 90%" : "top 80%",
+              toggleActions: "play none none reverse",
+            },
+          });
+
+          // Return a cleanup function scoped to this matchMedia block.
+          return () => {
+            introTl.scrollTrigger?.kill();
+            introTl.kill();
+          };
+        }
+      );
+
+      // Recalculate trigger positions after layout settles (fonts, images, etc.)
+      ScrollTrigger.refresh();
     }, sectionRef);
 
     return () => ctx.revert();
@@ -135,7 +157,7 @@ function Service() {
       className="w-full px-5 lg:px-8"
     >
       <div className="max-w-7xl mx-auto py-14 lg:py-24">
-        <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.8fr] gap-12 lg:gap-20">
+        <div className="grid grid-cols-1 lg:grid-cols-[0.9fr_1.8fr] gap-10 lg:gap-20">
           {/* Left Column */}
           <div>
             <span
@@ -145,17 +167,13 @@ function Service() {
               What We Do
             </span>
 
-            <h2 ref={headingRef} className="text-white text-3xl lg:text-4xl font-normal ">
-              Hospitality
-            
-              Management
-       
-              Services
+            <h2 ref={headingRef} className="text-white text-2xl sm:text-3xl lg:text-4xl font-normal leading-tight">
+              Hospitality Management Services
             </h2>
 
             <p
               ref={paraRef}
-              className="text-slate-300 text-base sm:text-md leading-8  mt-5 max-w-xl"
+              className="text-slate-300 text-sm sm:text-base leading-7 sm:leading-8 mt-4 sm:mt-5 max-w-xl"
             >
               We provide professional hospitality management solutions
               tailored for hotels, resorts, restaurants, and hospitality
